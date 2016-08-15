@@ -106,14 +106,14 @@ int main(int argc, const char *const  argv[])
         for (auto& type : types)
         {
             c++;
-            printf("%s\n(%d/%d)\n", type->getName().c_str(), c, total);
-            printf("TypeIndex: %d\n", type->m_typeIndex);
+            printf("%s\n(%d/%d)\n", type.getName().c_str(), c, total);
+            printf("TypeIndex: %d\n", type.getTypeIndex());
 
-            if (type->isUDT())
+            if (type.isUDT())
             {
-                auto baseClasses = type->getBaseClasses();
-                auto dataMembers = type->getDataMembers();
-                auto methods = type->getMethodMembers();
+                auto baseClasses = type.getBaseClasses();
+                auto dataMembers = type.getDataMembers();
+                auto methods = type.getMethodMembers();
                 printf("     Base classes: %s\n", Type::printTypes(baseClasses).c_str());
                 //printf("      dataMembers: %s\n", Type::printTypes(dataMembers).c_str());
                 //printf("          methods: %s\n", Type::printTypes(methods).c_str());

@@ -201,7 +201,7 @@ Type::TypeVector SymModule::getTypes(const std::string& filter, bool ignoreCase)
     auto callback = [](PSYMBOL_INFO pSymInfo, ULONG SymbolSize, PVOID UserContext)
     {
         if (!SymMatchString(pSymInfo->Name, filterPtr, compareCase)) return TRUE;
-        auto type = std::make_shared<Type>(pSymInfo->ModBase, pSymInfo->TypeIndex);
+        auto type = Type(pSymInfo->ModBase, pSymInfo->TypeIndex);
         retPtr->push_back(type);
         return TRUE;
     };

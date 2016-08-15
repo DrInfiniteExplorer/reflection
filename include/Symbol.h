@@ -14,7 +14,6 @@ protected:
     size_t m_symbolSize;
     SYMBOL_INFO m_symbolInfo;
 
-
 public:
     typedef std::shared_ptr<Symbol> SharedPtr;
     typedef std::vector<SharedPtr> SymbolVector;
@@ -39,6 +38,6 @@ public:
     size_t getSize() const;
     ULONG64 getAddress() const;
 
-    std::shared_ptr<Type> getType() const;
+    Type getType() const;
     std::shared_ptr<Function> getFunction() const;
 };

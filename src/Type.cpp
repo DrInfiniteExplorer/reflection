@@ -21,14 +21,14 @@ Type::Type(ULONG64 imageBase, ULONG typeIndex) : m_imageBase(imageBase), m_typeI
 	// http://www.tech-archive.net/Archive/VisualStudio/microsoft.public.vsnet.debugging/2004-03/0138.html
 }
 
-Type::SharedPtr Type::getType() const
+Type Type::getType() const
 {
 	DWORD type;
 	if (!GetProperty(TI_GET_TYPE, type))
 	{
 		throw std::runtime_error("Canna " __FUNCTION__);
 	}
-	return std::make_shared<Type>(m_imageBase, type);
+	return Type(m_imageBase, type);
 }
 
 DWORD Type::getBaseType() const
@@ -101,17 +101,17 @@ bool Type::operator==(const Type& other) const
 	case SymTagFunctionArgType:
 	case SymTagPointerType:
 	{
-		auto a = *getType();
-		auto b = *other.getType();
+		auto&& a = getType();
+		auto&& b = other.getType();
 		return a == b;
 	}
 
 	case SymTagFunctionType:
 	{
-		auto returnValueA = getReturnType();
-		auto returnValueB = other.getReturnType();
+		auto&& returnValueA = getReturnType();
+		auto&& returnValueB = other.getReturnType();
 
-		if (*returnValueA != *returnValueB)
+		if (returnValueA != returnValueB)
 		{
 			//throw std::runtime_error("Return type is different for things");
 			return false;
@@ -127,12 +127,12 @@ bool Type::operator==(const Type& other) const
 
 		for (size_t idx = 0; idx < parametersA.size(); idx++)
 		{
-			auto a = *parametersA[idx];
-			auto b = *parametersB[idx];
+			auto&& a = parametersA[idx];
+			auto&& b = parametersB[idx];
 			if (a != b)
 			{
-				auto isType = parametersA[idx]->toString();
-				auto wantType = parametersB[idx]->toString();
+				auto isType = parametersA[idx].toString();
+				auto wantType = parametersB[idx].toString();
 				char buffer[256];
 				sprintf_s(buffer, "Parameter %d differs for function; Wanted %s, is actually %s", idx, wantType.c_str(), isType.c_str());
 				//throw std::runtime_error(buffer);
@@ -301,7 +301,7 @@ Type::TypeVector Type::getBaseClasses() const
 	ret.resize(children.size());
 	auto makeType = [this](ULONG type)
 	{
-		return std::make_shared<Type>(m_imageBase, type);
+		return Type(m_imageBase, type);
 	};
 	std::transform(children.begin(), children.end(), ret.begin(), makeType);
 	return ret;
@@ -381,13 +381,13 @@ Type::TypeVector Type::getParameters() const
 	ret.resize(children.size());
 	auto makeType = [this](ULONG type)
 	{
-		return std::make_shared<Type>(m_imageBase, type);
+		return Type(m_imageBase, type);
 	};
 	std::transform(children.begin(), children.end(), ret.begin(), makeType);
 	return ret;
 }
 
-Type::SharedPtr Type::getReturnType() const
+Type Type::getReturnType() const
 {
 	if (!isFunctionType())
 	{
@@ -398,12 +398,12 @@ Type::SharedPtr Type::getReturnType() const
 
 std::string Type::printTypes(const TypeVector& sv)
 {
-	return std::accumulate(sv.begin(), sv.end(), std::string(), [](std::string sum, Type::SharedPtr b) {
+	return std::accumulate(sv.begin(), sv.end(), std::string(), [](std::string sum, const Type& b) {
 		return strprintf("%s\n%s(%s) %d %s",
 			sum.c_str(),
-			b->getName().c_str(),
-			SymTag(b->getTag()).toString().c_str(),
-			b->m_typeIndex,
+			b.getName().c_str(),
+			SymTag(b.getTag()).toString().c_str(),
+			b.m_typeIndex,
 			0/*itostr::hex(b->getAddress()).c_str()*/);
 	});
 }
@@ -462,16 +462,16 @@ std::string Type::getName() const
 	return m_typeName;
 }
 
-bool Type::hasBaseType(Type::SharedPtr baseType, bool recurse/*=true*/) const
+bool Type::hasBaseType(const Type& baseType, bool recurse/*=true*/) const
 {
 	//printf("Checking if %s has %s as basetype\n", m_typeName.c_str(), baseType->m_typeName.c_str());
 	//printf("%s\n%s\n", toString().c_str(), baseType->toString().c_str());
 	auto baseTypes = getBaseClasses();
-	auto callback = [&baseType, recurse](Type::SharedPtr baseClass)
+	auto callback = [&baseType, recurse](const Type& baseClass)
 	{
-		auto baseClassType = baseClass->getType();
-		auto baseClassIsFound = *baseClassType == *baseType;
-		return baseClassIsFound || (recurse && baseClassType->hasBaseType(baseType));
+		auto&& baseClassType = baseClass.getType();
+		auto baseClassIsFound = baseClassType == baseType;
+		return baseClassIsFound || (recurse && baseClassType.hasBaseType(baseType));
 	};
 	auto found = std::find_if(baseTypes.begin(), baseTypes.end(), callback);
 	return found != baseTypes.end();
@@ -485,9 +485,9 @@ std::string Type::toString() const
 	switch (thisTag)
 	{
 	case SymTagFunctionArgType:
-		return std::string("argument which is ") + getType()->toString();
+		return std::string("argument which is ") + getType().toString();
 	case SymTagPointerType:
-		return std::string("pointer to ") + getType()->toString();
+		return std::string("pointer to ") + getType().toString();
 	case SymTagNull:
 		return "null";
 	case SymTagFunction:
@@ -496,11 +496,11 @@ std::string Type::toString() const
 		return std::string("UDT named ") + getName() + " (do more)";
 	case SymTagFunctionType:
 	{
-		auto ret = getReturnType()->toString() + "(";
+		auto ret = getReturnType().toString() + "(";
 		auto args = getParameters();
 		for (const auto& arg : args)
 		{
-			ret += arg->toString() + ", ";
+			ret += arg.toString() + ", ";
 		}
 		return ret + ")";		
 	}

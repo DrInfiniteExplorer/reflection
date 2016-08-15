@@ -21,13 +21,13 @@ struct instantiate
         //auto baseType = baseTypes[0];
         auto baseTypePointerSymbol = reflection::getSymbolFromAddress(obtainTypeInfoFromThisPtr);
         auto baseTypePointerType = baseTypePointerSymbol->getType();
-        auto baseType = baseTypePointerType->getType();
+        auto baseType = baseTypePointerType.getType();
 
         auto types = reflection::getTypes("*");
-        auto found = std::find_if(types.begin(), types.end(), [&baseType](Type::SharedPtr type)
+        auto found = std::find_if(types.begin(), types.end(), [&baseType](const Type& type)
         {
-            if (!type->isUDT()) return false;
-            if (type->hasBaseType(baseType))
+            if (!type.isUDT()) return false;
+            if (type.hasBaseType(baseType))
             {
                 return true;
             }
@@ -41,22 +41,22 @@ struct instantiate
 
         auto typeToInstantiate = *found;
 
-        auto size = static_cast<size_t>(typeToInstantiate->getSize());
+        auto size = static_cast<size_t>(typeToInstantiate.getSize());
         Tptr ptr = reinterpret_cast<T*>(malloc(size));
 
-        auto constructors = typeToInstantiate->getConstructors();
+        auto constructors = typeToInstantiate.getConstructors();
         if (constructors.size() == 0) {
-            throw std::runtime_error(strprintf("Could not find any constructors to instantiate type %s which implements %s", typeToInstantiate->getName().c_str(), typeid(T).name()));
+            throw std::runtime_error(strprintf("Could not find any constructors to instantiate type %s which implements %s", typeToInstantiate.getName().c_str(), typeid(T).name()));
         }
 		typedef void(*ConstructorSignature)(Args...);
 		auto desiredFunctionSignature = Function::getFunctionType<ConstructorSignature>();
-		printf("%s\n", desiredFunctionSignature->toString().c_str());
+		printf("%s\n", desiredFunctionSignature.toString().c_str());
 
 		auto filter = [&desiredFunctionSignature](std::shared_ptr<Function>& con)
 		{
 			auto constructorSignature = con->getType();
-			printf("%s\n", constructorSignature->toString().c_str());
-			return *constructorSignature != *desiredFunctionSignature;
+			printf("%s\n", constructorSignature.toString().c_str());
+			return constructorSignature != desiredFunctionSignature;
 		};
 		auto end = std::remove_if(constructors.begin(), constructors.end(), filter);
 		constructors.resize(std::distance(constructors.begin(), end));

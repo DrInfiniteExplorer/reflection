@@ -143,9 +143,9 @@ ULONG64 Symbol::getAddress() const
     return m_symbolInfo.Address;
 }
 
-std::shared_ptr<Type> Symbol::getType() const
+Type Symbol::getType() const
 {
-    return std::make_shared<Type>(m_symbolInfo.ModBase, m_symbolInfo.TypeIndex);
+    return Type(m_symbolInfo.ModBase, m_symbolInfo.TypeIndex);
 }
 
 std::shared_ptr<Function> Symbol::getFunction() const

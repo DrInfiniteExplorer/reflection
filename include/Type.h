@@ -10,20 +10,21 @@ class Function;
 
 class Type
 {
+    std::string m_typeName;
+    ULONG64 m_imageBase;
+    ULONG m_typeIndex;
 public:
     template <typename T>
     BOOL GetProperty(IMAGEHLP_SYMBOL_TYPE_INFO info, T& t, ULONG* typeIndexPtr=nullptr) const;
 
-    typedef std::shared_ptr<Type> SharedPtr;
-    typedef std::vector<SharedPtr> TypeVector;
+    typedef std::vector<Type> TypeVector;
 
-    std::string m_typeName;
-    ULONG64 m_imageBase;
-    ULONG m_typeIndex;
-    
+	Type() : m_typeName("<uinitialized>"), m_imageBase(0), m_typeIndex(0) {};
     Type(ULONG64 imageBase, ULONG typeIndex);
 
-    SharedPtr getType() const;
+    Type getType() const;
+	ULONG getTypeIndex() const { return m_typeIndex; };
+
 	DWORD Type::getBaseType() const;
 	std::string getBaseTypeString(DWORD baseType, ULONG64 size) const;
 	bool operator==(const Type& other) const;
@@ -43,7 +44,7 @@ public:
     std::vector<std::shared_ptr<Function>> getConstructors(bool ignoreZeroAddress = true) const;
     std::vector<std::shared_ptr<Symbol>> getDataMembers() const;
     Type::TypeVector getParameters() const;
-    SharedPtr getReturnType() const;
+    Type getReturnType() const;
 
     static std::string printTypes(const TypeVector& sv);
 
@@ -58,7 +59,7 @@ public:
     bool isBaseClass() const;
     bool isVirtualBaseClass() const;
     std::string getName() const;
-    bool hasBaseType(Type::SharedPtr baseType, bool recurse=true) const;
+    bool hasBaseType(const Type& baseType, bool recurse=true) const;
 
     std::string toString() const;
 };

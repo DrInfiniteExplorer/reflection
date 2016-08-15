@@ -27,28 +27,28 @@ public:
 
 	
 	template <typename FuncPtrType>
-	static std::shared_ptr<Type> getFunctionType()
+	static Type getFunctionType()
 	{
 		static FuncPtrType functionPointer = nullptr;
 		ULONG64 functionPointerAddr = reinterpret_cast<ULONG64>(&functionPointer);
 		auto functionPointerSymbol = reflection::getSymbolFromAddress(functionPointerAddr);
 		auto functionPointerType = functionPointerSymbol->getType();
-		auto functionTypeLocal = functionPointerType->getType();
+		auto functionTypeLocal = functionPointerType.getType();
 		return functionTypeLocal;
 	}
 
     template <typename FuncPtrType>
-    void compareFunctionSignature(std::shared_ptr<Type> functionTypeInput)
+    void compareFunctionSignature(const Type& functionTypeInput)
     {
 		auto functionTypeLocal = getFunctionType<FuncPtrType>();
-		if (*functionTypeLocal != *functionTypeInput)
+		if (functionTypeLocal != functionTypeInput)
 		{
 			throw std::runtime_error("Invalid function types!");
 		}
     }
 
     template <typename ReturnType, typename funcPtrType, typename... Args>
-    ReturnType call(std::shared_ptr<Type> functionType, ULONG64 addr, Args&&... args)
+    ReturnType call(const Type& functionType, ULONG64 addr, Args&&... args)
     {
         compareFunctionSignature<funcPtrType>(functionType);
 
@@ -65,7 +65,7 @@ public:
     };
 
     template <typename ReturnType, typename ThisType, typename ...Args>
-    ReturnType thisCall(std::shared_ptr<Type> functionType, ULONG64 addr, ThisType thisPtr, Args&&... args)
+    ReturnType thisCall(const Type& functionType, ULONG64 addr, ThisType thisPtr, Args&&... args)
     {
         typedef ThisCallType<ReturnType, std::remove_reference<ThisType>::type , Args...>::pfnThisCall pfnType;
         compareFunctionSignature<pfnType>(functionType);
@@ -94,7 +94,7 @@ public:
         }
 
         auto functionType = getType();
-        auto callingConvention = functionType->getCallConvention();
+        auto callingConvention = functionType.getCallConvention();
 
         switch (callingConvention)
         {
@@ -132,7 +132,7 @@ public:
     }
 
     std::string toString() const override {
-        return getType()->toString() + " FUNCTION!!!!! " + __super::toString();
+        return getType().toString() + " FUNCTION!!!!! " + __super::toString();
     }
 };
 
