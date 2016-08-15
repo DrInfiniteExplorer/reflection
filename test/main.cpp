@@ -141,6 +141,9 @@ int main(int argc, const char *const  argv[])
 		instance = instantiate < ITestInterface >::doit<int>(9);
 		instance->funcA();
 		instance->funcB();
+		instance = instantiate < ITestInterface >::doit<>();
+		instance->funcA();
+		instance->funcB();
 	}
     catch (const std::exception& e)
     {

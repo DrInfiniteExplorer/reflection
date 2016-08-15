@@ -50,12 +50,12 @@ struct instantiate
         }
 		typedef void(*ConstructorSignature)(Args...);
 		auto desiredFunctionSignature = Function::getFunctionType<ConstructorSignature>();
-		printf("%s\n", desiredFunctionSignature.toString().c_str());
+		//printf("%s\n", desiredFunctionSignature.toString().c_str());
 
 		auto filter = [&desiredFunctionSignature](std::shared_ptr<Function>& con)
 		{
 			auto constructorSignature = con->getType();
-			printf("%s\n", constructorSignature.toString().c_str());
+			//printf("%s\n", constructorSignature.toString().c_str());
 			return constructorSignature != desiredFunctionSignature;
 		};
 		auto end = std::remove_if(constructors.begin(), constructors.end(), filter);
