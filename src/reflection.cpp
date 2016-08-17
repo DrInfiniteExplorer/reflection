@@ -43,7 +43,7 @@ namespace reflection
         //ReflectionInitialized = true;
     }
 
-    Symbol::SharedPtr getSymbolFromAddress(ULONG64 address)
+    Symbol getSymbolFromAddress(ULONG64 address)
     {
         return ThisModule->getSymbolFromAddress(address);
     }

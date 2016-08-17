@@ -9,7 +9,7 @@ namespace reflection
 {
     void init();
 
-    Symbol::SharedPtr getSymbolFromAddress(ULONG64 address);
+    Symbol getSymbolFromAddress(ULONG64 address);
     
     Type::TypeVector getTypes(const std::string& mask, bool ignoreCase = false);
 

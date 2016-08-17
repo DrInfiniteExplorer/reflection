@@ -156,7 +156,7 @@ Symbol::SymbolVector SymModule::getSymbols(const std::string& symbolFilter) cons
     svPtr = &ret;
 
     auto callback = [](PSYMBOL_INFO pInfo, ULONG symbolSize, PVOID userContext) {
-        auto symbol = std::make_shared<Symbol>(pInfo, symbolSize);
+        auto symbol = Symbol(pInfo, symbolSize);
         svPtr->push_back(symbol);
         return TRUE;
     };
@@ -168,7 +168,7 @@ Symbol::SymbolVector SymModule::getSymbols(const std::string& symbolFilter) cons
     return ret;
 }
 
-Symbol::SharedPtr SymModule::getSymbolFromAddress(ULONG64 address) const
+Symbol SymModule::getSymbolFromAddress(ULONG64 address) const
 {
 
     size_t bufferSize = sizeof(SYMBOL_INFO) + sizeof(TCHAR) * MAX_SYM_NAME;
@@ -185,7 +185,7 @@ Symbol::SharedPtr SymModule::getSymbolFromAddress(ULONG64 address) const
     {
         throw std::runtime_error("Could not SymFromAddr from " __FUNCTION__);
     }
-    return std::make_shared<Symbol>(ptr, ptr->Size);
+    return Symbol(ptr, ptr->Size);
 }
 
 Type::TypeVector SymModule::getTypes(const std::string& filter, bool ignoreCase) const

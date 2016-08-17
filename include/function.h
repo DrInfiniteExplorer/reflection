@@ -9,10 +9,10 @@ class Function : public Symbol
 {
 public:
     using Symbol::Symbol;
+    Function() : Symbol() {}
     Function(ULONG64 imageBase, ULONG functionTypeIndex)
         : Symbol(imageBase, functionTypeIndex) {}
-    typedef std::shared_ptr<Function> SharedPtr;
-    typedef std::vector<SharedPtr> FunctionVector;
+    typedef std::vector<Function> FunctionVector;
 private:
 
     template <typename RetType, typename... T>
@@ -81,7 +81,7 @@ public:
 		static FuncPtrType functionPointer = nullptr;
 		ULONG64 functionPointerAddr = reinterpret_cast<ULONG64>(&functionPointer);
 		auto functionPointerSymbol = reflection::getSymbolFromAddress(functionPointerAddr);
-		auto functionPointerType = functionPointerSymbol->getType();
+		auto functionPointerType = functionPointerSymbol.getType();
 		auto functionTypeLocal = functionPointerType.getType();
 		return functionTypeLocal;
 	}

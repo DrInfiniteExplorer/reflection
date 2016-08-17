@@ -47,15 +47,15 @@ int main(int argc, const char *const  argv[])
         SymRefreshModuleList(GetCurrentProcess());
 
         auto funcSymbol = reflection::getSymbolFromAddress(reinterpret_cast<ULONG64>(&func));
-        printf("Func %p %s\n", &func, funcSymbol->toString().c_str());
+        printf("Func %p %s\n", &func, funcSymbol.toString().c_str());
 
         try {
             auto gSymbol = reflection::getSymbolFromAddress(reinterpret_cast<ULONG64>(&g));
-            printf("g %p %s\n", &g, gSymbol->toString().c_str());
+            printf("g %p %s\n", &g, gSymbol.toString().c_str());
 
             static int i = 3;
             auto iSymbol = reflection::getSymbolFromAddress(reinterpret_cast<ULONG64>(&i));
-            printf("i %p %s\n", &i, iSymbol->toString().c_str());
+            printf("i %p %s\n", &i, iSymbol.toString().c_str());
         }
         catch (std::exception& e)
         {
@@ -97,7 +97,7 @@ int main(int argc, const char *const  argv[])
         for (auto& symbol : symbols)
         {
             c++;
-            printf("%s\n(%d/%d)\n", symbol->toString().c_str(), c, total);
+            printf("%s\n(%d/%d)\n", symbol.toString().c_str(), c, total);
         }
 
         printf(" ===  Types  ===\n");

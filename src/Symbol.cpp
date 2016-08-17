@@ -10,6 +10,12 @@
 #include "function.h"
 
 
+Symbol::Symbol()
+    : m_symbolInfo()
+    , m_symbolSize(0)
+    , m_symbolName("<uninitialized>")
+{
+}
 
 Symbol::Symbol(PSYMBOL_INFO pSymbolInfo, size_t symbolSize) 
     : m_symbolInfo(*pSymbolInfo)
@@ -148,11 +154,11 @@ Type Symbol::getType() const
     return Type(m_symbolInfo.ModBase, m_symbolInfo.TypeIndex);
 }
 
-std::shared_ptr<Function> Symbol::getFunction() const
+Function Symbol::getFunction() const
 {
     if (getTag() != SymTagFunction)
     {
         throw std::runtime_error("Error, not a function!");
     }
-    return std::make_shared<Function>(m_symbolInfo.ModBase, m_symbolInfo.TypeIndex);
+    return Function(m_symbolInfo.ModBase, m_symbolInfo.TypeIndex);
 }

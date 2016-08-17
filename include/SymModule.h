@@ -39,7 +39,7 @@ public:
     std::string toString() const;
     Symbol::SymbolVector getSymbols(const std::string& symbolFilter) const;
 
-    Symbol::SharedPtr getSymbolFromAddress(ULONG64 address) const;
+    Symbol getSymbolFromAddress(ULONG64 address) const;
 
     Type::TypeVector getTypes(const std::string& filter, bool ignoreCase = false) const;
 };

@@ -46,13 +46,13 @@ int main(int argc, const char *const  argv[])
 
         typedef decltype(&functionToTest) FunctionToTestPtrType;
         auto funcSymbol = reflection::getSymbolFromAddress(reinterpret_cast<ULONG64>(&functionToTest));
-        auto&& type = funcSymbol->getType();
+        auto&& type = funcSymbol.getType();
         printf("%s\n%s\n"
-            , funcSymbol->toString().c_str()
+            , funcSymbol.toString().c_str()
             , type.toString().c_str());
 
-        auto asFunction = funcSymbol->getFunction();
-        asFunction->callFunction<void>();
+        auto asFunction = funcSymbol.getFunction();
+        asFunction.callFunction<void>();
     }
     catch (const std::exception& e)
     {

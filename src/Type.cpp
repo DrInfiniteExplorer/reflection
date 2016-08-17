@@ -319,7 +319,7 @@ Function::FunctionVector Type::getMethodMembers() const
 	ret.resize(children.size());
 	auto makeType = [this](ULONG type)
 	{
-		return std::make_shared<Function>(m_imageBase, type);
+		return Function(m_imageBase, type);
 	};
 	std::transform(children.begin(), children.end(), ret.begin(), makeType);
 	return ret;
@@ -339,13 +339,13 @@ Function::FunctionVector Type::getConstructors(bool ignoreZeroAddress /*= true*/
 	ret.resize(children.size());
 	auto makeType = [this](ULONG type)
 	{
-		return std::make_shared<Function>(m_imageBase, type);
+		return Function(m_imageBase, type);
 	};
 	std::transform(children.begin(), children.end(), ret.begin(), makeType);
 
-	auto filterFunctions = [this, ignoreZeroAddress](Function::SharedPtr function)
+	auto filterFunctions = [this, ignoreZeroAddress](const Function& function)
 	{
-		return function->getNameOriginal() != this->getName() || (ignoreZeroAddress && function->getAddress() == 0);
+		return function.getNameOriginal() != this->getName() || (ignoreZeroAddress && function.getAddress() == 0);
 	};
 
 	auto newEnd = std::remove_if(ret.begin(), ret.end(), filterFunctions);
@@ -366,7 +366,7 @@ Symbol::SymbolVector Type::getDataMembers() const
 	ret.resize(children.size());
 	auto makeType = [this](ULONG type)
 	{
-		return std::make_shared<Symbol>(m_imageBase, type);
+		return Symbol(m_imageBase, type);
 	};
 	std::transform(children.begin(), children.end(), ret.begin(), makeType);
 	return ret;

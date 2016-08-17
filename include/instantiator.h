@@ -20,7 +20,7 @@ struct instantiate
         //auto baseTypes = reflection::getTypes(baseTypeName);
         //auto baseType = baseTypes[0];
         auto baseTypePointerSymbol = reflection::getSymbolFromAddress(obtainTypeInfoFromThisPtr);
-        auto baseTypePointerType = baseTypePointerSymbol->getType();
+        auto baseTypePointerType = baseTypePointerSymbol.getType();
         auto baseType = baseTypePointerType.getType();
 
         auto types = reflection::getTypes("*");
@@ -48,26 +48,26 @@ struct instantiate
         if (constructors.size() == 0) {
             throw std::runtime_error(strprintf("Could not find any constructors to instantiate type %s which implements %s", typeToInstantiate.getName().c_str(), typeid(T).name()));
         }
-		typedef void(*ConstructorSignature)(Args...);
-		auto desiredFunctionSignature = Function::getFunctionType<ConstructorSignature>();
-		//printf("%s\n", desiredFunctionSignature.toString().c_str());
+        typedef void(*ConstructorSignature)(Args...);
+        auto desiredFunctionSignature = Function::getFunctionType<ConstructorSignature>();
+        //printf("%s\n", desiredFunctionSignature.toString().c_str());
 
-		auto filter = [&desiredFunctionSignature](std::shared_ptr<Function>& con)
-		{
-			auto constructorSignature = con->getType();
-			//printf("%s\n", constructorSignature.toString().c_str());
-			return constructorSignature != desiredFunctionSignature;
-		};
-		auto end = std::remove_if(constructors.begin(), constructors.end(), filter);
-		constructors.resize(std::distance(constructors.begin(), end));
+        auto filter = [&desiredFunctionSignature](const Function& con)
+        {
+            auto constructorSignature = con.getType();
+            //printf("%s\n", constructorSignature.toString().c_str());
+            return constructorSignature != desiredFunctionSignature;
+        };
+        auto end = std::remove_if(constructors.begin(), constructors.end(), filter);
+        constructors.resize(std::distance(constructors.begin(), end));
 
-		if (constructors.size() != 1)
-		{
-			throw std::runtime_error("Got to many or no matching constructors");
-		}
-		auto constructor = constructors[0];
+        if (constructors.size() != 1)
+        {
+            throw std::runtime_error("Got to many or no matching constructors");
+        }
+        auto constructor = constructors[0];
 
-        constructor->callFunction<void, Tptr, Args...>(static_cast<Tptr&&>(ptr), std::forward<Args>(args)...);
+        constructor.callFunction<void, Tptr, Args...>(static_cast<Tptr&&>(ptr), std::forward<Args>(args)...);
 
         //typedef void(__stdcall *pfnConstructor)();
         //pfnConstructor fn;

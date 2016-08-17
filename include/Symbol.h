@@ -15,9 +15,9 @@ protected:
     SYMBOL_INFO m_symbolInfo;
 
 public:
-    typedef std::shared_ptr<Symbol> SharedPtr;
-    typedef std::vector<SharedPtr> SymbolVector;
+    typedef std::vector<Symbol> SymbolVector;
 
+    Symbol();
     Symbol(PSYMBOL_INFO pSymbolInfo, size_t symbolSize);
     Symbol(ULONG64 imageBase, ULONG symbolIdx);
 
@@ -39,5 +39,5 @@ public:
     ULONG64 getAddress() const;
 
     Type getType() const;
-    std::shared_ptr<Function> getFunction() const;
+    Function getFunction() const;
 };
