@@ -20,6 +20,7 @@ namespace reflection
         auto loadBase = GetModuleHandle(nullptr);
         ThisModuleBase = reinterpret_cast<ULONG64>(loadBase);
 
+		/*
         auto cb = []( PCSTR ModuleName, DWORD64 ModuleBase, ULONG ModuleSize, PVOID UserContext)
         {
             printf("!%s!\n!%s!\n%s\n%s\n\n", ThisModuleFilename, ModuleName, 
@@ -29,12 +30,13 @@ namespace reflection
         };
 
         EnumerateLoadedModules64(GetCurrentProcess(), cb, 0);
+		*/
         
         static SymModule ThisModule_realization = SymModule::load(ThisModuleFilename, true, ThisModuleBase);
         ThisModule = &ThisModule_realization;
         ReflectionInitialized = true;
 
-        printf("%s\n", ThisModule_realization.toString().c_str());
+        //printf("%s\n", ThisModule_realization.toString().c_str());
 
         //static SymModule ThisModule_realization = SymModule::findLoaded(ThisModuleFilename);
         //ThisModule = &ThisModule_realization;

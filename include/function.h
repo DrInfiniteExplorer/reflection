@@ -11,9 +11,9 @@ public:
     using Symbol::Symbol;
     Function(ULONG64 imageBase, ULONG functionTypeIndex)
         : Symbol(imageBase, functionTypeIndex) {}
-
     typedef std::shared_ptr<Function> SharedPtr;
     typedef std::vector<SharedPtr> FunctionVector;
+private:
 
     template <typename RetType, typename... T>
     struct CallTypes
@@ -26,16 +26,6 @@ public:
     };
 
 	
-	template <typename FuncPtrType>
-	static Type getFunctionType()
-	{
-		static FuncPtrType functionPointer = nullptr;
-		ULONG64 functionPointerAddr = reinterpret_cast<ULONG64>(&functionPointer);
-		auto functionPointerSymbol = reflection::getSymbolFromAddress(functionPointerAddr);
-		auto functionPointerType = functionPointerSymbol->getType();
-		auto functionTypeLocal = functionPointerType.getType();
-		return functionTypeLocal;
-	}
 
     template <typename FuncPtrType>
     void compareFunctionSignature(const Type& functionTypeInput)
@@ -79,12 +69,24 @@ public:
         return ((*thisPtr).*(*(&fPtr)))(std::forward<Args>(args)...);
     }
     template <typename ReturnType>
-    ReturnType thisCall(std::shared_ptr<Type> functionType, ULONG64 addr)
+    ReturnType thisCall(const Type& functionType, ULONG64 addr)
     {
         throw std::runtime_error("No u no no no");
     }
 
-    template<typename ReturnType, typename ...T>
+public:
+	template <typename FuncPtrType>
+	static Type getFunctionType()
+	{
+		static FuncPtrType functionPointer = nullptr;
+		ULONG64 functionPointerAddr = reinterpret_cast<ULONG64>(&functionPointer);
+		auto functionPointerSymbol = reflection::getSymbolFromAddress(functionPointerAddr);
+		auto functionPointerType = functionPointerSymbol->getType();
+		auto functionTypeLocal = functionPointerType.getType();
+		return functionTypeLocal;
+	}
+
+	template<typename ReturnType, typename ...T>
     ReturnType callFunction(T&&... t)
     {
         auto functionAddress = getAddress();

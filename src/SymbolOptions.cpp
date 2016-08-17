@@ -13,13 +13,6 @@ DWORD SymbolOptions::getOptions()
 
 void SymbolOptions::setOptions(DWORD flags)
 {
-    auto prev = SymGetOptions();
-    if (prev != flags) {
-        printf("Prev: %x (%s)\nNew : %x (%s)\n",
-            prev, toString(prev).c_str(),
-            flags, toString(flags).c_str()
-            );
-    }
     SymSetOptions(flags);
 }
 

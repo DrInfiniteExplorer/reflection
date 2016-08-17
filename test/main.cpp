@@ -37,10 +37,10 @@ int main(int argc, const char *const  argv[])
         auto status = SymInitialize(GetCurrentProcess(), nullptr, bInvade);
         if (status == FALSE)
         {
-            MessageBoxA(nullptr, "COULD NOT INITIALIZE SYMBOL STUFF", "ERROR", MB_ICONERROR);
+            printf("COULD NOT INITIALIZE SYMBOL STUFF\n");
             return 1;
         }
-        class cleanup{ public: ~cleanup(){ SymCleanup(GetCurrentProcess()); } } _cleanup;
+        class cleanup { public: ~cleanup() { SymCleanup(GetCurrentProcess()); } } _cleanup;
 
         reflection::init();
         auto aaa = &g;
@@ -59,7 +59,8 @@ int main(int argc, const char *const  argv[])
         }
         catch (std::exception& e)
         {
-            MessageBoxA(NULL, e.what(), "Error", 0);
+            printf("Exception caught:\n%s\n", e.what());
+            return 1;
         }
 
         std::string pdbFilePath;
@@ -72,9 +73,9 @@ int main(int argc, const char *const  argv[])
         pdbFilePath = "d:\\C++\\debugtools\\pdbInspector\\Debug\\pdbInspector.pdb";
         pdbFilePath = "d:\\Kod\\reflection\\pdbInspector\\Debug\\pdbInspector.exe";
 
-		char asdasd[80];
-		asdasd[GetModuleFileNameA(0, asdasd, 80)] = 0;
-		pdbFilePath = asdasd;
+        char asdasd[80];
+        asdasd[GetModuleFileNameA(0, asdasd, 80)] = 0;
+        pdbFilePath = asdasd;
 
         //pdbFilePath = "d:\\C++\\WorldTool\\AppRoot\\bin\\WorldTool.pdb";
 #else
@@ -128,8 +129,14 @@ int main(int argc, const char *const  argv[])
         //dummy->funcA();
 
 
-		int var = 2;
-        auto instance = instantiate < ITestInterface >::doit<int>(static_cast<int&&>(var++));
+        int var = 2;
+        auto instance = instantiate < ITestInterface >::doit<int>(9);
+        instance->funcA();
+        instance->funcB();
+        instance = instantiate < ITestInterface >::doit<>();
+        instance->funcA();
+        instance->funcB();
+        instance = instantiate < ITestInterface >::doit<int>(static_cast<int&&>(var++));
         instance->funcA();
         instance->funcB();
         instance = instantiate < ITestInterface >::doit<int>(std::forward<int>(var++));
@@ -138,17 +145,11 @@ int main(int argc, const char *const  argv[])
         instance = instantiate < ITestInterface >::specify<int>::call(var++);
         instance->funcA();
         instance->funcB();
-		instance = instantiate < ITestInterface >::doit<int>(9);
-		instance->funcA();
-		instance->funcB();
-		instance = instantiate < ITestInterface >::doit<>();
-		instance->funcA();
-		instance->funcB();
-	}
+    }
     catch (const std::exception& e)
     {
-        //MessageBoxA(NULL, e.what(), "Exception!", MB_ICONERROR);
-		printf("Exception caught:\n%s\n", e.what());
+        printf("Exception caught:\n%s\n", e.what());
+        return 1;
     }
-
+    return 0;
 }

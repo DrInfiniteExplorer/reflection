@@ -205,7 +205,7 @@ DWORD Type::getCount() const
 
 ULONG Type::getTag() const
 {
-	DWORD tag;
+	DWORD tag = 0;
 	if (!GetProperty(TI_GET_SYMTAG, tag))
 	{
 		throw std::runtime_error("Could not " __FUNCTION__);
