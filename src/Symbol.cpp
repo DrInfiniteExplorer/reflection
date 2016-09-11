@@ -160,5 +160,5 @@ Function Symbol::getFunction() const
     {
         throw std::runtime_error("Error, not a function!");
     }
-    return Function(m_symbolInfo.ModBase, m_symbolInfo.TypeIndex);
+    return Function(m_symbolInfo.ModBase, m_symbolInfo.Index);
 }

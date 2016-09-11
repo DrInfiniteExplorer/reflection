@@ -33,7 +33,11 @@ private:
 		auto functionTypeLocal = getFunctionType<FuncPtrType>();
 		if (functionTypeLocal != functionTypeInput)
 		{
-			throw std::runtime_error("Invalid function types!");
+          char buffer[456];
+          sprintf(buffer, "Invalid function types! Cant call a \"%s\" as if it where a \"%s\"",
+              functionTypeLocal.toString().c_str(),
+              functionTypeInput.toString().c_str());
+			throw std::runtime_error(buffer);
 		}
     }
 
@@ -68,10 +72,14 @@ private:
         *(&addrConv) = addr;
         return ((*thisPtr).*(*(&fPtr)))(std::forward<Args>(args)...);
     }
+
+	// This function is only here to prevent compilation errors.
+	// For example, a normal _int func()_ -invocation through `.callFunction`
+	//  will need this function to exist, even though it never gets called.
     template <typename ReturnType>
     ReturnType thisCall(const Type& functionType, ULONG64 addr)
     {
-        throw std::runtime_error("No u no no no");
+        throw std::runtime_error("Can't call a thiscall-function with no arguments.");
     }
 
 public:
@@ -98,6 +106,22 @@ public:
         auto functionType = getType();
         auto callingConvention = functionType.getCallConvention();
 
+		// Nobody knows what CV_CALL_GENERIC actually is.
+		//  Use 'number of arguments' vs 'count' to determine if it is thiscall.
+		// For now fallback to cdecl otherwise.
+		if(CV_CALL_GENERIC == callingConvention)
+		{
+			if (functionType.getCount() != functionType.getParameters().size())
+			{
+				callingConvention = CV_CALL_THISCALL;
+			}
+			else
+			{
+				// Fall back to cdecl
+				callingConvention = CV_CALL_FAR_C;
+			}
+		}
+
         switch (callingConvention)
         {
         case CV_CALL_NEAR_C:
@@ -110,10 +134,8 @@ public:
         case CV_CALL_FAR_STD:
             return call<ReturnType, typename CallTypes<ReturnType, T...>::pfnStdCall, T...>(functionType, functionAddress, std::forward<T>(t)...);
         case CV_CALL_THISCALL:
-        case CV_CALL_GENERIC:
             return thisCall<ReturnType, T...>(functionType, functionAddress, std::forward<T>(t)...);
-            //return compareAndCall<CallTypes<ReturnType, T>::pfnThisCall(), ReturnType>(std::forward(t));
-            //break;
+        case CV_CALL_GENERIC:
         case CV_CALL_MIPSCALL:
         case CV_CALL_ALPHACALL:
         case CV_CALL_PPCCALL:
