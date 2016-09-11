@@ -130,7 +130,7 @@ int main(int argc, const char *const  argv[])
 
 
         int var = 2;
-        auto instance = instantiate < ITestInterface >::doit<int>(9);
+        auto instance = instantiate<ITestInterface>::doit<int>(9);
         instance->funcA();
         instance->funcB();
         instance = instantiate < ITestInterface >::doit<>();

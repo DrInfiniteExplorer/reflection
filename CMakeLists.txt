@@ -12,7 +12,7 @@ include_directories ("${PROJECT_SOURCE_DIR}/include")
 file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 file(GLOB HEADERS ${PROJECT_SOURCE_DIR}/include/*.h)
 
-add_library(${PROJECT_NAME} ${SOURCES})
+add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
 install(FILES ${PROJECT_NAME} DESTINATION include/${PROJECT_NAME})

@@ -7,7 +7,10 @@ public:
     int m_member;
 
     TestClass() : m_member(5) {}
-    TestClass(int init) : m_member(init) {}
+    TestClass(int init) : m_member(init)
+	{
+		new TestClass();
+	}
 
     void funcA() override
     {

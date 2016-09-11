@@ -44,7 +44,6 @@ int main(int argc, const char *const  argv[])
         reflection::init();
         SymRefreshModuleList(GetCurrentProcess());
 
-        typedef decltype(&functionToTest) FunctionToTestPtrType;
         auto funcSymbol = reflection::getSymbolFromAddress(reinterpret_cast<ULONG64>(&functionToTest));
         auto&& type = funcSymbol.getType();
         printf("%s\n%s\n"
@@ -52,7 +51,13 @@ int main(int argc, const char *const  argv[])
             , type.toString().c_str());
 
         auto asFunction = funcSymbol.getFunction();
-        asFunction.callFunction<void>();
+        try {
+            asFunction.callFunction<void>();
+        }
+        catch (const std::runtime_error& e)
+        {
+            printf("Exception: %s\n", e.what());
+        }
     }
     catch (const std::exception& e)
     {
