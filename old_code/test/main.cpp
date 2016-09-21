@@ -24,14 +24,16 @@ int g = 4;
 int main(int argc, const char *const  argv[])
 {
     try {
-        SymbolOptions::addOptions(SYMOPT_DEBUG);
-        SymbolOptions::addOptions(SYMOPT_LOAD_LINES);
-        SymbolOptions::addOptions(SYMOPT_ALLOW_ZERO_ADDRESS);
-        SymbolOptions::addOptions(SYMOPT_INCLUDE_32BIT_MODULES);
+		//SymSetOptions(flags);
+		SymbolOptions symOptions;
+        symOptions.addOptions(SYMOPT_DEBUG);
+        symOptions.addOptions(SYMOPT_LOAD_LINES);
+        symOptions.addOptions(SYMOPT_ALLOW_ZERO_ADDRESS);
+        symOptions.addOptions(SYMOPT_INCLUDE_32BIT_MODULES);
 
-        SymbolOptions::removeOptions(SYMOPT_UNDNAME);
-        SymbolOptions::removeOptions(SYMOPT_NO_CPP);
-        SymbolOptions::removeOptions(SYMOPT_DEFERRED_LOADS);
+        symOptions.removeOptions(SYMOPT_UNDNAME);
+        symOptions.removeOptions(SYMOPT_NO_CPP);
+        symOptions.removeOptions(SYMOPT_DEFERRED_LOADS);
 
         BOOL bInvade = FALSE;
         auto status = SymInitialize(GetCurrentProcess(), nullptr, bInvade);

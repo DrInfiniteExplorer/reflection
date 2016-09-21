@@ -5,12 +5,13 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
-#add_definitions(-D_NO_CVCONST_H) 
- 
-include_directories ("${PROJECT_SOURCE_DIR}/include")
+include_directories("${PROJECT_SOURCE_DIR}/include")
+
+include_directories("$ENV{VSINSTALLDIR}DIA SDK/include")
+link_directories("$ENV{VSINSTALLDIR}DIA SDK/lib")
 
 file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
-file(GLOB HEADERS ${PROJECT_SOURCE_DIR}/include/*.h)
+file(GLOB HEADERS ${PROJECT_SOURCE_DIR}/include/reflection/*.h)
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 

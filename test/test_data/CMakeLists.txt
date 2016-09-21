@@ -1,0 +1,16 @@
+cmake_minimum_required (VERSION 2.6)
+project (ReflectionTestData)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED on)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+
+
+file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/*.cpp)
+file(GLOB HEADERS ${PROJECT_SOURCE_DIR}/*.h)
+
+add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
+
+install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
+install(FILES ${PROJECT_NAME} DESTINATION include/${PROJECT_NAME})
+

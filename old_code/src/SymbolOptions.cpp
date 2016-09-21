@@ -3,17 +3,23 @@
 #include <stdio.h>
 #include "dbghelp/dbghelp.h"
 
-
-
+SymbolOptions::SymbolOptions()
+{
+	m_flags = SymGetOptions();
+}
+SymbolOptions::SymbolOptions(DWORD flags)
+	: m_flags(flags)
+{
+}
 
 DWORD SymbolOptions::getOptions()
 {
-    return SymGetOptions();
+    return m_flags;
 }
 
 void SymbolOptions::setOptions(DWORD flags)
 {
-    SymSetOptions(flags);
+	m_flags = flags;
 }
 
 void SymbolOptions::removeOptions(DWORD flags)
